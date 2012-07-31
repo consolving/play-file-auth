@@ -1,0 +1,5 @@
+# Default play-file-auth messages
+# You can specialize this file for each language.
+# For exemple, for french create a messages.fr file
+
+#play-file-auth.name=play-file-auth
