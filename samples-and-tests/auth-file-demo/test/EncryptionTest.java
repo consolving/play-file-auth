@@ -12,12 +12,6 @@ import play.test.UnitTest;
  */
 public class EncryptionTest extends UnitTest {
 
-    public static void main(String args[]) {
-        EncryptionTest test = new EncryptionTest();
-        test.testApacheCrypt();
-        test.testCrypt();
-    }
-
     @Test
     public void testApacheCrypt() {
         Logger.info("testing APACHE_CRYPT");

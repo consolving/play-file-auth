@@ -7,12 +7,12 @@
 package controllers;
 
 import java.util.Map;
-import play.modules.fileauth.FileAuthScanner;
+import play.modules.fileauth.FileAuth;
 
 public class AuthFileSecurity extends Secure.Security {
 
     public static boolean authentify(String username, String password) {
-        Map<String,String> users = FileAuthScanner.getUsers();
+        Map<String,String> users = FileAuth.getUsers();
         String userPassword = users.get(username.toLowerCase());
         return userPassword.equals(password);
     }

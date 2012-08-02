@@ -13,6 +13,7 @@ import play.jobs.Job;
 public class ScanJob extends Job {
     @Override
     public void doJob(){
-        FileAuthScanner.scanUsers();
+        FileAuth.scanUsers();
+        FileAuth.scanGroups();
     }
 }
