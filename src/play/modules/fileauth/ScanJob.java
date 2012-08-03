@@ -9,7 +9,11 @@ package play.modules.fileauth;
 import play.jobs.Every;
 import play.jobs.Job;
 
-@Every("1h")
+/**
+ * Periodically Scan of user/group files. Scan runs every 5 mins.
+ * @author Philipp Haußleiter
+ */
+@Every("5min")
 public class ScanJob extends Job {
     @Override
     public void doJob(){

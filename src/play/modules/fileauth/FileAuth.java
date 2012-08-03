@@ -20,11 +20,21 @@ import play.Play;
 import play.cache.Cache;
 import play.modules.fileauth.utils.MD5Crypt;
 
+/**
+ * Basic Wrapper for all FileAuth Functions.
+ * @author Philipp Haußleiter
+ */
 public class FileAuth {
 
+    /* Cache Key for User/PasswordHash Map */
     public final static String AUTH_FILE_USERS_CACHE_KEY = "AUTH_FILE_USERS";
+    /* Cache Key for Group/Users Map */
     public final static String AUTH_FILE_GROUPS_CACHE_KEY = "AUTH_FILE_USERS";
 
+    /**
+     * Returns a Map of all Users (user/password hash).
+     * @return the Map.
+     */
     public static Map<String, String> getUsers() {
         Map<String, String> users = Cache.get(AUTH_FILE_USERS_CACHE_KEY, HashMap.class);
         if (users == null) {
@@ -33,6 +43,10 @@ public class FileAuth {
         return users;
     }
 
+    /**
+     * Returns a Map of all Groups (groups/usernames).
+     * @return the Map.
+     */
     public static Map<String, Set<String>> getGroups() {
         Map<String, Set<String>> groups = Cache.get(AUTH_FILE_GROUPS_CACHE_KEY, HashMap.class);
         if (groups == null) {
@@ -41,6 +55,12 @@ public class FileAuth {
         return groups;
     }
 
+    /**
+     * Checks if a group contains a given username.
+     * @param group the Group to check.
+     * @param user the user to check.
+     * @return true if user is in group, otherwise false.
+     */
     public static boolean contains(String group, String user) {
         if (group == null || user == null) {
             return false;
@@ -53,6 +73,12 @@ public class FileAuth {
         return groupUsers.contains(user);
     }
 
+    /**
+     * Validates an user with a given password agains the user/password hash mapping.
+     * @param user the given user.
+     * @param password the given password (clear text).
+     * @return true if validation okay, otherwise false.
+     */
     public static boolean validate(String user, String password) {
         if (user == null || password == null) {
             return false;
@@ -65,6 +91,10 @@ public class FileAuth {
         return MD5Crypt.verifyPassword(password, encryptedPass);
     }
 
+    /**
+     * Rescans the users file.
+     * @return the updated Map of users.
+     */
     public static Map<String, String> scanUsers() {
         String fileName = Play.configuration.getProperty("authfile.users.path");
         String delimeter1 = Play.configuration.getProperty("authfile.users.delimeter", ":");
@@ -94,6 +124,10 @@ public class FileAuth {
         return users;
     }
 
+    /**
+     * Rescans the groups file.
+     * @return the updated Map of groups.
+     */
     public static Map<String, Set<String>> scanGroups() {
         String fileName = Play.configuration.getProperty("authfile.groups.path");
         String delimeter1 = Play.configuration.getProperty("authfile.users.delimeter", ":");
