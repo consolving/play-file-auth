@@ -9,18 +9,20 @@ import play.modules.fileauth.FileAuth;
 import play.modules.fileauth.utils.MD5Crypt;
 import play.test.UnitTest;
 
+
 /**
- * HtUsersTest
- * 03.08.2012
+ * ShadowUsersTest
+ * 04.08.2012
  * @author Philipp Haussleiter
  *
  */
-public class HtUsersTest extends UnitTest {
+public class ShadowUsersTest extends UnitTest {
 
     @BeforeClass
     public static void setup() {
-        Play.configuration.setProperty("authfile.users.path", Play.applicationPath + "/test/htusers");
+        Play.configuration.setProperty("authfile.users.path", Play.applicationPath + "/test/shadow");
         Play.configuration.setProperty("authfile.users.delimeter", ":");
+        Cache.safeDelete(FileAuth.AUTH_FILE_USERS_CACHE_KEY);
     }
 
     @Test
@@ -41,8 +43,6 @@ public class HtUsersTest extends UnitTest {
     public void testValidatePassword() {
         String pass = "user";
         String user = "user";
-        assertTrue(FileAuth.validate(user, pass));
-        user = "apacheUser";
         assertTrue(FileAuth.validate(user, pass));
         user = "user";
         pass = "user123";

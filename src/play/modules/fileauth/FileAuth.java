@@ -110,7 +110,12 @@ public class FileAuth {
             String parts[];
             while ((line = br.readLine()) != null) {
                 parts = line.split(delimeter1);
-                if (parts.length == 2) {
+                /*
+                 * Matches
+                 * user:hash
+                 * user:hash:uid: ...
+                 */
+                if (parts.length > 1) {
                     users.put(parts[0].trim(), parts[1].trim());
                 }
             }
@@ -146,8 +151,12 @@ public class FileAuth {
             Set<String> users;
             while ((line = br.readLine()) != null) {
                 parts = line.split(delimeter1);
-                if (parts.length == 2) {
-                    userParts = parts[1].split(delimeter2);
+                if (parts.length > 1) {
+                    if(parts.length > 2) {
+                        userParts = parts[parts.length-1].split(delimeter2);
+                    } else {
+                        userParts = parts[1].split(delimeter2);
+                    }
                     if (userParts.length > 0) {
                         users = new HashSet<String>();
                         for (String user : userParts) {

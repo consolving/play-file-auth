@@ -10,18 +10,19 @@ import play.modules.fileauth.FileAuth;
 import play.test.UnitTest;
 
 /**
- * HtGroupsTest
- * 03.08.2012
+ * GroupGroupsTest
+ * 04.08.2012
  * @author Philipp Haussleiter
  *
  */
-public class HtGroupsTest extends UnitTest {
+public class GroupGroupsTest extends UnitTest {
 
     @BeforeClass
     public static void setup() {
-        Play.configuration.setProperty("authfile.groups.path", Play.applicationPath + "/test/htgroups");
+        Play.configuration.setProperty("authfile.groups.path", Play.applicationPath + "/test/group");
         Play.configuration.setProperty("authfile.users.delimeter", ":");
-        Play.configuration.setProperty("authfile.groups.delimeter", " ");
+        Play.configuration.setProperty("authfile.groups.delimeter", ",");
+        Cache.safeDelete(FileAuth.AUTH_FILE_GROUPS_CACHE_KEY);
     }
 
     @Test
