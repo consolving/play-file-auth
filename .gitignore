@@ -17,10 +17,10 @@ server.pid
 
 nbproject
 
-lib/*
-
 modules/*
 
 dist/*
 
 samples-and-tests/auth-file-demo/modules/*
+
+lib/play-play-file-auth.jar
