@@ -29,8 +29,9 @@ public class FileAuth {
     /* Cache Key for User/PasswordHash Map */
     public final static String AUTH_FILE_USERS_CACHE_KEY = "AUTH_FILE_USERS";
     /* Cache Key for Group/Users Map */
-    public final static String AUTH_FILE_GROUPS_CACHE_KEY = "AUTH_FILE_USERS";
+    public final static String AUTH_FILE_GROUPS_CACHE_KEY = "AUTH_FILE_GROUPS";
 
+    private final static String CACHE_TIMEOUT = "5mn";
     /**
      * Returns a Map of all Users (user/password hash).
      * @return the Map.
@@ -98,7 +99,7 @@ public class FileAuth {
     public static Map<String, String> scanUsers() {
         String fileName = Play.configuration.getProperty("authfile.users.path");
         String delimeter1 = Play.configuration.getProperty("authfile.users.delimeter", ":");
-        Logger.info("Scanning " + fileName + " @" + System.currentTimeMillis());
+        Logger.info("Scanning Users in " + fileName + " @" + System.currentTimeMillis());
         Map<String, String> users = new HashMap<String, String>();
         File file = new File(fileName);
         if (!file.exists() && !file.isFile()) {
@@ -119,7 +120,7 @@ public class FileAuth {
                     users.put(parts[0].trim(), parts[1].trim());
                 }
             }
-            Cache.set(AUTH_FILE_USERS_CACHE_KEY, users);
+            Cache.set(AUTH_FILE_USERS_CACHE_KEY, users, CACHE_TIMEOUT);
         } catch (FileNotFoundException ex) {
             Logger.error(ex.getLocalizedMessage(), ex);
         } catch (IOException ex) {
@@ -137,7 +138,7 @@ public class FileAuth {
         String fileName = Play.configuration.getProperty("authfile.groups.path");
         String delimeter1 = Play.configuration.getProperty("authfile.users.delimeter", ":");
         String delimeter2 = Play.configuration.getProperty("authfile.groups.delimeter", " ");
-        Logger.info("Scanning " + fileName + " @" + System.currentTimeMillis());
+        Logger.info("Scanning Groups in " + fileName + " @" + System.currentTimeMillis());
         Map<String, Set<String>> groups = new HashMap<String, Set<String>>();
         File file = new File(fileName);
         if (!file.exists() && !file.isFile()) {
@@ -166,7 +167,7 @@ public class FileAuth {
                     }
                 }
             }
-            Cache.set(AUTH_FILE_GROUPS_CACHE_KEY, groups);
+            Cache.set(AUTH_FILE_GROUPS_CACHE_KEY, groups, CACHE_TIMEOUT);
         } catch (FileNotFoundException ex) {
             Logger.error(ex.getLocalizedMessage(), ex);
         } catch (IOException ex) {
