@@ -99,7 +99,7 @@ public class FileAuth {
     public static Map<String, String> scanUsers() {
         String fileName = Play.configuration.getProperty("authfile.users.path");
         String delimeter1 = Play.configuration.getProperty("authfile.users.delimeter", ":");
-        Logger.info("Scanning Users in " + fileName + " @" + System.currentTimeMillis());
+        Logger.info("@" + System.currentTimeMillis()+" Scanning Users in " + fileName);
         Map<String, String> users = new HashMap<String, String>();
         File file = new File(fileName);
         if (!file.exists() && !file.isFile()) {
@@ -138,7 +138,7 @@ public class FileAuth {
         String fileName = Play.configuration.getProperty("authfile.groups.path");
         String delimeter1 = Play.configuration.getProperty("authfile.users.delimeter", ":");
         String delimeter2 = Play.configuration.getProperty("authfile.groups.delimeter", " ");
-        Logger.info("Scanning Groups in " + fileName + " @" + System.currentTimeMillis());
+        Logger.info("@" + System.currentTimeMillis()+" Scanning Groups in " + fileName);
         Map<String, Set<String>> groups = new HashMap<String, Set<String>>();
         File file = new File(fileName);
         if (!file.exists() && !file.isFile()) {
