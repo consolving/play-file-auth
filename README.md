@@ -1,7 +1,7 @@
 play-file-auth
 ==============
 
-This Module supports authentication of Play! Applications agains Unix Auth Files (e.g. Apache htusers)
+This Module supports authentication of Play! 1.x Applications agains Unix Auth Files (e.g. Apache htusers)
 
 This Plugin works for all Auth Files with the following syntax:
 
