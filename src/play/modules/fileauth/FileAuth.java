@@ -1,6 +1,6 @@
 /**
- * FileAuth
- * 31.07.2012
+ * FileAuth 31.07.2012
+ *
  * @author Philipp Haussleiter
  *
  */
@@ -22,6 +22,7 @@ import play.modules.fileauth.utils.MD5Crypt;
 
 /**
  * Basic Wrapper for all FileAuth Functions.
+ *
  * @author Philipp Haußleiter
  */
 public class FileAuth {
@@ -29,14 +30,19 @@ public class FileAuth {
     /* Cache Key for User/PasswordHash Map */
     public final static String AUTH_FILE_USERS_CACHE_KEY = "AUTH_FILE_USERS";
     /* Cache Key for Group/Users Map */
+    public final static boolean IS_ENABLED = isEnabled();
     public final static String AUTH_FILE_GROUPS_CACHE_KEY = "AUTH_FILE_GROUPS";
-
     private final static String CACHE_TIMEOUT = "5mn";
+
     /**
      * Returns a Map of all Users (user/password hash).
+     *
      * @return the Map.
      */
     public static Map<String, String> getUsers() {
+        if (!IS_ENABLED) {
+            return new HashMap<String, String>();
+        }
         Map<String, String> users = Cache.get(AUTH_FILE_USERS_CACHE_KEY, HashMap.class);
         if (users == null) {
             users = scanUsers();
@@ -46,9 +52,13 @@ public class FileAuth {
 
     /**
      * Returns a Map of all Groups (groups/usernames).
+     *
      * @return the Map.
      */
     public static Map<String, Set<String>> getGroups() {
+        if (!IS_ENABLED) {
+            return new HashMap<String, Set<String>>();
+        }
         Map<String, Set<String>> groups = Cache.get(AUTH_FILE_GROUPS_CACHE_KEY, HashMap.class);
         if (groups == null) {
             groups = scanGroups();
@@ -58,35 +68,44 @@ public class FileAuth {
 
     /**
      * Checks if a group contains a given username.
+     *
      * @param group the Group to check.
      * @param user the user to check.
      * @return true if user is in group, otherwise false.
      */
     public static boolean contains(String group, String user) {
+        if (!IS_ENABLED) {
+            return true;
+        }
         if (group == null || user == null) {
             return false;
         }
         Map<String, Set<String>> groups = getGroups();
         Set<String> groupUsers = groups.get(group);
-        if(groupUsers == null){
+        if (groupUsers == null) {
             return false;
         }
         return groupUsers.contains(user);
     }
 
     /**
-     * Validates an user with a given password agains the user/password hash mapping.
+     * Validates an user with a given password agains the user/password hash
+     * mapping.
+     *
      * @param user the given user.
      * @param password the given password (clear text).
      * @return true if validation okay, otherwise false.
      */
     public static boolean validate(String user, String password) {
+        if (!IS_ENABLED) {
+            return true;
+        }
         if (user == null || password == null) {
             return false;
         }
         Map<String, String> users = getUsers();
         String encryptedPass = users.get(user);
-        if(encryptedPass == null){
+        if (encryptedPass == null) {
             return false;
         }
         return MD5Crypt.verifyPassword(password, encryptedPass);
@@ -94,15 +113,16 @@ public class FileAuth {
 
     /**
      * Rescans the users file.
+     *
      * @return the updated Map of users.
      */
     public static Map<String, String> scanUsers() {
         String fileName = Play.configuration.getProperty("authfile.users.path");
         String delimeter1 = Play.configuration.getProperty("authfile.users.delimeter", ":");
-        Logger.info("@" + System.currentTimeMillis()+" Scanning Users in " + fileName);
+        Logger.info("@" + System.currentTimeMillis() + " Scanning Users in " + fileName);
         Map<String, String> users = new HashMap<String, String>();
         File file = new File(fileName);
-        if (!file.exists() && !file.isFile()) {
+        if (file == null || !file.exists() || !file.isFile()) {
             Logger.warn(fileName + " is not a valid Auth-File!");
         }
         try {
@@ -132,16 +152,17 @@ public class FileAuth {
 
     /**
      * Rescans the groups file.
+     *
      * @return the updated Map of groups.
      */
     public static Map<String, Set<String>> scanGroups() {
         String fileName = Play.configuration.getProperty("authfile.groups.path");
         String delimeter1 = Play.configuration.getProperty("authfile.users.delimeter", ":");
         String delimeter2 = Play.configuration.getProperty("authfile.groups.delimeter", " ");
-        Logger.info("@" + System.currentTimeMillis()+" Scanning Groups in " + fileName);
+        Logger.info("@" + System.currentTimeMillis() + " Scanning Groups in " + fileName);
         Map<String, Set<String>> groups = new HashMap<String, Set<String>>();
         File file = new File(fileName);
-        if (!file.exists() && !file.isFile()) {
+        if (file == null || !file.exists() || !file.isFile()) {
             Logger.warn(fileName + " is not a valid Auth-File!");
         }
         try {
@@ -153,8 +174,8 @@ public class FileAuth {
             while ((line = br.readLine()) != null) {
                 parts = line.split(delimeter1);
                 if (parts.length > 1) {
-                    if(parts.length > 2) {
-                        userParts = parts[parts.length-1].split(delimeter2);
+                    if (parts.length > 2) {
+                        userParts = parts[parts.length - 1].split(delimeter2);
                     } else {
                         userParts = parts[1].split(delimeter2);
                     }
@@ -175,5 +196,15 @@ public class FileAuth {
         }
         Logger.info("found " + groups.size() + " mappings");
         return groups;
+    }
+
+    private static boolean isEnabled() {
+        if (Play.configuration.getProperty("authfile.users.path") == null
+                || Play.configuration.getProperty("authfile.groups.path") == null) {
+            Logger.info("FileAuth not enabled. authfile.users.path or authfile.groups.path not set!");
+            return false;
+        }
+        return true;
+
     }
 }
