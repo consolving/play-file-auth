@@ -22,11 +22,11 @@ public class ApacheUsersTest extends UnitTest {
         Play.configuration.setProperty("authfile.users.path", Play.applicationPath + "/test/htusers");
         Play.configuration.setProperty("authfile.users.delimeter", ":");
         Cache.safeDelete(FileAuth.AUTH_FILE_USERS_CACHE_KEY);
+        FileAuth.scanUsers();
     }
 
     @Test
     public void testUsersRead() {
-        FileAuth.scanUsers();
         Map<String, String> users = Cache.get(FileAuth.AUTH_FILE_USERS_CACHE_KEY, HashMap.class);
         assertNotNull(users);
     }

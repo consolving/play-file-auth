@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import play.Logger;
 import play.Play;
 import play.cache.Cache;
 import play.modules.fileauth.FileAuth;
@@ -21,6 +22,7 @@ public class ShadowUsersTest extends UnitTest {
     @BeforeClass
     public static void setup() {
         Play.configuration.setProperty("authfile.users.path", Play.applicationPath + "/test/shadow");
+        Logger.info("file path: "+Play.configuration.getProperty("authfile.users.path"));
         Play.configuration.setProperty("authfile.users.delimeter", ":");
         Cache.safeDelete(FileAuth.AUTH_FILE_USERS_CACHE_KEY);
     }
