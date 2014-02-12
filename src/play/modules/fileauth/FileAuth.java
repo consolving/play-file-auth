@@ -19,6 +19,7 @@ import play.Logger;
 import play.Play;
 import play.cache.Cache;
 import play.modules.fileauth.utils.MD5Crypt;
+import play.modules.fileauth.utils.UnixCrypt;
 
 /**
  * Basic Wrapper for all FileAuth Functions.
@@ -106,9 +107,19 @@ public class FileAuth {
         Map<String, String> users = getUsers();
         String encryptedPass = users.get(user);
         if (encryptedPass == null) {
+            Logger.warn("encryptedPass is NULL for user " + user);
             return false;
         }
-        return MD5Crypt.verifyPassword(password, encryptedPass);
+        if (encryptedPass.startsWith("$") 
+                && MD5Crypt.verifyPassword(password, encryptedPass)) {
+            return true;
+        }
+        if(encryptedPass.length() == 13 
+                && UnixCrypt.matches(encryptedPass, password)){
+            return true;
+        }
+        Logger.warn("could not validate user " + user);
+        return false;
     }
 
     /**
@@ -162,7 +173,7 @@ public class FileAuth {
         Logger.info("@" + System.currentTimeMillis() + " Scanning Groups in " + fileName);
         Map<String, Set<String>> groups = new HashMap<String, Set<String>>();
         File file = new File(fileName);
-        if (file == null || !file.exists() || !file.isFile()) {
+        if (!file.exists() || !file.isFile()) {
             Logger.warn(fileName + " is not a valid Auth-File!");
         }
         try {

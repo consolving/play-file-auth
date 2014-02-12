@@ -358,7 +358,7 @@ public final class MD5Crypt {
         } else if (md5CryptText.startsWith("$apr1$")) {
             return md5CryptText.equals(MD5Crypt.apacheCrypt(plaintextPass, md5CryptText));
         } else {
-            throw new RuntimeException("Bad md5CryptText");
+            return false;
         }
     }
 }
